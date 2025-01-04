@@ -1,0 +1,70 @@
+services:
+  django:
+    env_file: &env_file src/.env
+    build: &build
+      context: .
+      target: devcontainer
+    working_dir: &working_dir /opt/django
+    command:
+      - poetry
+      - run
+      - python
+      - manage.py
+      - runserver
+      - 0.0.0.0:8000
+    ports:
+      - "8000:8000"
+    volumes: &volumes
+      - site_packages:/usr/local/lib/python3.12/site-packages
+      - usr_local_bin:/usr/local/bin
+      - poetry_cache:/root/.cache/pypoetry
+      - ./src:/opt/django
+      - ./tests:/opt/django/tests
+    depends_on: &depends_on
+      - redis
+      - postgres
+  worker:
+    env_file: *env_file
+    build: *build
+    working_dir: *working_dir
+    command:
+      - poetry
+      - run
+      - celery
+      - --app=config
+      - worker
+      - --task-events
+      - --concurrency=1
+      - --loglevel=DEBUG
+    volumes: *volumes
+    depends_on: *depends_on
+  redis:
+    image: redis:alpine
+  postgres:
+    env_file: *env_file
+    image: postgres:15-alpine
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  caddy:
+    image: caddy:2.7.6
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+volumes:
+  pg_data:
+  site_packages:
+  usr_local_bin:
+  poetry_cache:
+  caddy_data:
+  caddy_config:

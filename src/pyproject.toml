@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "django-template"
+version = "0.1.0"
+description = "Шаблон для django проекта"
+authors = ["etalipov <alshaur@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.1.4"
+django-environ = "^0.11.2"
+celery = "^5.4.0"
+redis = "^5.2.1"
+psycopg2-binary = "^2.9.10"
+ruff = "^0.8.5"
+mypy = "^1.14.1"
+whitenoise = "^6.8.2"
+django-stubs = "^5.1.1"
+pydantic = "^2.10.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.mypy]
+ignore_missing_imports = true
+explicit_package_bases = true
+install_types = true
+non_interactive = true
+no_implicit_optional = true
+exclude = ["tests", "env"]
+plugins = ["mypy_django_plugin.main", "pydantic.mypy"]
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
