@@ -1,1 +1,1 @@
-Шаблон для проектов на Django
+Template for Django Applications
