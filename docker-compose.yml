@@ -6,12 +6,12 @@ services:
       target: devcontainer
     working_dir: &working_dir /opt/django
     command:
-      - poetry
-      - run
-      - python
-      - manage.py
-      - runserver
+      - gunicorn
+      - config.wsgi
+      - --bind
       - 0.0.0.0:8000
+      - --log-level
+      - info
     ports:
       - "8000:8000"
     volumes: &volumes
