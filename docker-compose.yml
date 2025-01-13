@@ -18,8 +18,7 @@ services:
       - site_packages:/usr/local/lib/python3.12/site-packages
       - usr_local_bin:/usr/local/bin
       - poetry_cache:/root/.cache/pypoetry
-      - ./src:/opt/django
-      - ./tests:/opt/django/tests
+      - ./src:/opt/django      
     depends_on: &depends_on
       - redis
       - postgres
