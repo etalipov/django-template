@@ -1,0 +1,17 @@
+name: CI with lint check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint_check:            
+    runs-on: ubuntu-latest   
+
+    steps:
+    - uses: actions/checkout@v4    
+    - uses: astral-sh/ruff-action@v3   
+    - run: ruff check
+    - run: ruff format --check     
