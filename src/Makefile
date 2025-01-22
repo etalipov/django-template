@@ -23,3 +23,10 @@ collectstatic:
 
 createsuperuser:
 	poetry run python manage.py createsuperuser --noinput
+
+lint_check:
+	poetry run ruff check .
+
+format_check:
+	poetry run ruff format --check .
+	

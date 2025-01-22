@@ -1,4 +1,4 @@
-name: CI with lint check
+name: CI with tests
 
 on:
   push:
@@ -6,12 +6,32 @@ on:
   pull_request:
     branches: [ "master" ]
 
-jobs:
-  lint_check:            
+jobs:    
+  test:            
     runs-on: ubuntu-latest   
 
     steps:
     - uses: actions/checkout@v4    
-    - uses: astral-sh/ruff-action@v3   
-    - run: ruff check
-    - run: ruff format --check     
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.12"    
+        
+    - uses: snok/install-poetry@v1
+      with:
+        version: 1.8.0
+        virtualenvs-create: false
+        virtualenvs-in-project: true    
+
+    - name: Install dependencies
+      run: |
+        cd src
+        poetry install --no-interaction && \
+          yes | poetry cache clear --all --no-interaction .
+  
+    - name: Run tests
+      run: |
+        cp .env.template src/.env
+        cd src
+        make types
+        make format_check
+        make lint_check
