@@ -2,12 +2,11 @@ name: Build docker image and deploy on VPS
 
 on:
   push:    
-    branches: [ "master" ]
+    branches: [ "master", "main" ]
 
-env:
-    VPS_LOGIN: www
+env:    
     DOCKER_REGISTRY: ghcr.io
-    DOCKER_IMAGE: ghcr.io/${{ github.repository_owner }}/django:${{ github.sha }}
+    DOCKER_IMAGE: ghcr.io/${{ github.GITHUB_REPOSITORY }}:${{ github.sha }}
 
 jobs:
   build:    
@@ -46,7 +45,7 @@ jobs:
         uses: appleboy/scp-action@v1        
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ env.VPS_LOGIN }}
+          username: ${{ secrets.SSH_LOGIN }}
           key: ${{ secrets.SSH_KEY }}          
           source: docker-compose.yml
           target: /home/www/
@@ -58,7 +57,7 @@ jobs:
           ENV_FILE: ${{ secrets.ENV_FILE }}
         with:
           host: ${{ secrets.SSH_HOST }}
-          username: ${{ env.VPS_LOGIN }}
+          username: ${{ secrets.SSH_LOGIN }}
           key: ${{ secrets.SSH_KEY }}          
           envs: DOCKER_IMAGE,DOCKER_REGISTRY,GHCR_TOKEN,ENV_FILE          
           script: |    
