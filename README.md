@@ -1,13 +1,13 @@
-#	Template for Django app with CI-CD on VPS
+# Template for Django app with CI-CD on VPS
 
-Add to the repository secrets:
+## Add to the repository secrets:
 * `SSH_LOGIN` - username on VPS server
 * `SSH_HOST` - VPS server IP
 * `SSH_KEY` - privat ssh key for ssh connect on VPS
 * `ENV_FILE` - exemple in `.env.template`
 * `GHCR_TOKEN` - token for access github regestry
 
-#	Setup VPS on Debian linux:
+## Setup VPS on Debian linux:
 
 ### 1. OS setup:
 * connect to VPS `ssh root@vps_server_ip`
@@ -109,7 +109,7 @@ Add to the repository secrets:
 		```
 
 
-# Setup for local development:		
+## Setup for local development:		
 * cp .env.template src/.env
 * make prepare
 * make up
