@@ -2,7 +2,7 @@ name: Build docker image and deploy on VPS
 
 on:
   push:    
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 env:
     VPS_LOGIN: www
