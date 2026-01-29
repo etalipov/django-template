@@ -9,7 +9,7 @@ class TestView(View):
     def get(request):
         seconds_s = request.GET.get("seconds")
         if seconds_s is None:
-            return HttpResponse("Hello, World!!!")
+            return HttpResponse("Hello, World!")
 
         try:
             seconds = int(seconds_s)
@@ -22,4 +22,4 @@ class TestView(View):
 
 
 def index(request):
-    return HttpResponse("Start page!!!")
+    return HttpResponse("Start page!")
