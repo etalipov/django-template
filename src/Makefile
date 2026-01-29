@@ -1,32 +1,18 @@
-default: test
-
-install:
-	poetry install
-
-format_fix:
-	poetry run ruff format .
-
-lint_fix:
-	poetry run ruff check . --fix
-
-types:
-	poetry run mypy .
-
 makemigrations:
-	poetry run python manage.py makemigrations
+	python manage.py makemigrations
 
 migrate:
-	poetry run python manage.py migrate
-
-collectstatic:
-	poetry run python manage.py collectstatic --noinput
+	python manage.py migrate
 
 createsuperuser:
-	poetry run python manage.py createsuperuser --noinput
+	python manage.py createsuperuser --noinput
 
-lint_check:
-	poetry run ruff check .
+ruff_fix:
+	ruff format .
+	ruff check . --fix
 
-format_check:
-	poetry run ruff format --check .
-	
+mypy:
+	mypy .
+
+collectstatic:
+	python manage.py collectstatic --noinput

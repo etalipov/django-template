@@ -1,28 +1,29 @@
-FROM python:3.12-slim AS devcontainer
+FROM python:3.13-slim AS draft
 
-ENV PYTHONPATH=
 ENV PYTHONUNBUFFERED=1
-ENV POETRY_VIRTUALENVS_CREATE=false
+#   Using system python, without venv
+ENV UV_PROJECT_ENVIRONMENT="/usr/local/"    
 ENV DJANGO_SETTINGS_MODULE=config.settings
-
-RUN apt-get update && \
-    apt-get install --assume-yes make && \
-    apt-get clean
-
-RUN pip install poetry~=1.8.0 --no-cache-dir
-
-FROM devcontainer AS draft
 
 WORKDIR /opt/django
 
-COPY src/pyproject.toml src/poetry.lock ./
+COPY src/pyproject.toml src/uv.lock ./
 
-RUN poetry install --no-interaction && \
-    yes | poetry cache clear --all --no-interaction .
+RUN apt-get update && \
+    apt-get install -y make --no-install-recommends && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+    
+COPY --from=ghcr.io/astral-sh/uv:0.9.25 /uv /uvx /bin/
+
+FROM draft AS dev
+
+RUN uv sync --locked --no-install-project
 
 COPY src ./
-COPY .env.template ./.env
 
 FROM draft AS release
 
-RUN python manage.py collectstatic --noinput
+RUN uv sync --locked --no-install-project --no-dev
+
+COPY src ./

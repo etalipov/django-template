@@ -1,4 +1,16 @@
-/src/.env
-.idea/
+# Python-generated files
 __pycache__/
-.vscode/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+db.sqlite3
+.env
+
+.mypy_cache
+.ruff_cache

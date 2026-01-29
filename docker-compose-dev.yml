@@ -1,7 +1,9 @@
 services:
   django:
-    env_file: &env_file .env
-    image: &image ${DOCKER_IMAGE}
+    env_file: &env_file ./src/.env
+    build: &build
+      context: .
+      target: dev
     working_dir: &working_dir /opt/django    
     command:
       - gunicorn
@@ -12,14 +14,14 @@ services:
       - info
     ports:
       - "8000:8000"    
-    volumes:
-      - /var/www/django/static:/opt/django/static
+    volumes:      
+      - ./src:/opt/django
     depends_on: &depends_on
       - redis
 
   celery:
     env_file: *env_file
-    image: *image
+    build: *build
     working_dir: *working_dir    
     command:
       - uv

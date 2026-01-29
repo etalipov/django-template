@@ -1,0 +1,82 @@
+name: Build docker image and deploy on VPS
+
+on:
+  push:    
+    branches: [ "main" ]
+
+env:
+    VPS_LOGIN: www
+    DOCKER_REGISTRY: ghcr.io
+    DOCKER_IMAGE: ghcr.io/${{ github.repository_owner }}/django:${{ github.sha }}
+
+jobs:
+  build:    
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    steps:
+      - uses: actions/checkout@v6    
+      
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GHCR_TOKEN }}
+      
+      - name: Build and push image
+        run: |          
+          docker build --target release -t ${{ env.DOCKER_IMAGE }} .
+          docker push ${{ env.DOCKER_IMAGE }}
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Get docker-compose file from git repo
+        uses: actions/checkout@v6
+        with:
+          sparse-checkout: |
+            docker-compose.yml
+          sparse-checkout-cone-mode: false
+      
+      - name: Copy docker-compose file to VPS
+        uses: appleboy/scp-action@v1        
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ env.VPS_LOGIN }}
+          key: ${{ secrets.SSH_KEY }}          
+          source: docker-compose.yml
+          target: /home/www/
+
+      - name: Run docker-compose file on VPS
+        uses: appleboy/ssh-action@v1        
+        env:
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ env.VPS_LOGIN }}
+          key: ${{ secrets.SSH_KEY }}          
+          envs: DOCKER_IMAGE,DOCKER_REGISTRY,GHCR_TOKEN,ENV_FILE          
+          script: |    
+            export DOCKER_IMAGE=$DOCKER_IMAGE 
+
+            mkdir -p django-app             
+            mv docker-compose.yml django-app
+            cd django-app
+            
+            cat << EOF > .env
+            $ENV_FILE
+            EOF
+
+            echo "$GHCR_TOKEN" | docker login -u "${{ github.actor }}" --password-stdin "$DOCKER_REGISTRY"            
+            
+            docker compose pull                        
+            docker compose run --rm django make migrate
+            docker compose run --rm django make collectstatic
+            docker compose up -d
+
+            rm -rf .env

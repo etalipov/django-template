@@ -1,17 +1,16 @@
 RUN := run --rm
-DOCKER_COMPOSE ?= docker compose
+DOCKER_COMPOSE ?= docker compose -f docker-compose-dev.yml
 DOCKER_COMPOSE_RUN := ${DOCKER_COMPOSE} $(RUN)
 
-default: prepare
 
 build:
 	${DOCKER_COMPOSE} build
 
+up:
+	${DOCKER_COMPOSE} up
+
 bash:
 	${DOCKER_COMPOSE_RUN} django bash
-
-install:
-	${DOCKER_COMPOSE_RUN} django make install
 
 makemigrations:
 	${DOCKER_COMPOSE_RUN} django make makemigrations
@@ -22,14 +21,10 @@ migrate:
 createsuperuser:
 	${DOCKER_COMPOSE_RUN} django make createsuperuser
 
-lint:
-	${DOCKER_COMPOSE_RUN} django make format_fix
-	${DOCKER_COMPOSE_RUN} django make lint_fix
+ruff_fix:
+	${DOCKER_COMPOSE_RUN} django make ruff_fix	
 
-types:
-	${DOCKER_COMPOSE_RUN} django make types
+mypy:
+	${DOCKER_COMPOSE_RUN} django make mypy
 
-up:
-	${DOCKER_COMPOSE} up
-
-prepare: build install migrate createsuperuser
+prepare: build migrate createsuperuser
