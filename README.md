@@ -110,6 +110,6 @@
 
 
 ## Setup for local development:		
-* cp .env.template src/.env
-* make prepare
-* make up
+* `cp .env.template src/.env`
+* `make prepare`
+* `make up`
