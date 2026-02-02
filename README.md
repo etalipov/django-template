@@ -66,7 +66,7 @@
 
 
 ### 4. Docker setup:
-* Install docker https://docs.docker.com/engine/install/debian/
+* install [Docker](https://docs.docker.com/engine/install/debian/) for Debian
 * `sudo usermod -aG docker my_cool_user `
 
 * run docker compose to create network
