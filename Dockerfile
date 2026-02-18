@@ -22,8 +22,12 @@ RUN uv sync --locked --no-install-project
 
 COPY src ./
 
+USER 1001:1001
+
 FROM draft AS release
 
 RUN uv sync --locked --no-install-project --no-dev
 
 COPY src ./
+
+USER 1001:1001
