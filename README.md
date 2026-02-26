@@ -72,8 +72,7 @@
 * run docker compose to create network
 * `docker network ls` - get us `network_name`
 * `docker network inspect network_name` - get `ip_docker_host` in Gateway and `subnet_docker_host` in Subnet
-* `sudo ufw allow from subnet_docker_host to any port 5432 proto tcp`
-* `sudo ufw deny from any to any port 5432`
+
 	
 ### 5. Postgres setup
 * `sudo apt install postgresql`
@@ -94,7 +93,10 @@
 	```
 	host	db_name		db_user		subnet_docker_host	md5
 	```
-	
+
+* `sudo ufw allow from subnet_docker_host to any port 5432 proto tcp`
+* `sudo ufw deny from any to any port 5432`
+
 * `sudo service postgresql restart`
 	
 * if external connection to db is needed:		
