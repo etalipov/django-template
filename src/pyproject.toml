@@ -21,7 +21,6 @@ dev = [
 
 [tool.mypy]
 explicit_package_bases = true
-mypy_path = ["src"]
 ignore_missing_imports = true
 
 [tool.ruff]
