@@ -16,6 +16,9 @@ services:
       - /var/www/django/static:/opt/django/static
     depends_on: &depends_on
       - redis
+    cpus: "0.1"
+    mem_limit: 256m
+    mem_reservation: 128m
 
   celery:
     env_file: *env_file
